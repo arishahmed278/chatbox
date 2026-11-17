@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ChatBox</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background: #0b2925;
+      color: white;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 255px minmax(0, 1fr);
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 0;
+      background: #10332d;
+      border-right: 1px solid #285447;
+      overflow: hidden;
+    }
+
+    .brand {
+      height: 65px;
+      min-height: 65px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 0 16px;
+      color: #81d7ac;
+      font-size: 21px;
+      font-weight: bold;
+      border-bottom: 1px solid #285447;
+    }
+
+    .brand i {
+      font-size: 20px;
+    }
+
+    .search-box {
+      padding: 13px 12px;
+      flex-shrink: 0;
+    }
+
+    .search-box input {
+      width: 100%;
+      height: 41px;
+      padding: 0 12px;
+      color: white;
+      background: #173e35;
+      border: 1px solid #376b59;
+      border-radius: 9px;
+      outline: none;
+      font-size: 13px;
+    }
+
+    .search-box input::placeholder,
+    .message-form input::placeholder {
+      color: #9ab5a9;
+    }
+
+    .section-title {
+      padding: 4px 14px 10px;
+      color: #9dc8b5;
+      font-size: 10px;
+      letter-spacing: 1px;
+      font-weight: bold;
+    }
+
+    .contact-list {
+      flex: 1;
+      min-height: 0;
+      padding: 0 8px 10px;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .empty-contacts {
+      padding: 25px 10px;
+      text-align: center;
+      color: #9ab5a9;
+      font-size: 12px;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 10px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .contact-item:hover,
+    .contact-item.active {
+      background: #204a3d;
+    }
+
+    .contact-avatar {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: #286451;
+      color: #b5f0d0;
+      font-weight: bold;
+    }
+
+    .contact-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .contact-name {
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .contact-status {
+      color: #a8c9b9;
+      font-size: 10px;
+      margin-top: 5px;
+    }
+
+    .sidebar-footer {
+      padding: 12px;
+      border-top: 1px solid #285447;
+      background: #10332d;
+      flex-shrink: 0;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 12px;
+      min-width: 0;
+    }
+
+    .logout-btn {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #376b59;
+      border-radius: 8px;
+      color: #d8eee2;
+      background: #173e35;
+      cursor: pointer;
+    }
+
+    .logout-btn:hover {
+      background: #285447;
+    }
+
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 0;
+      height: 100%;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0b2925, #143b32);
+    }
+
+    .chat-welcome {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .welcome-icon {
+      width: 75px;
+      height: 75px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 24px;
+      background: #204a3d;
+      color: #80d5a8;
+      font-size: 34px;
+      margin-bottom: 18px;
+    }
+
+    .chat-welcome h2 {
+      font-size: 22px;
+      margin-bottom: 9px;
+    }
+
+    .chat-welcome p {
+      color: #a5c5b6;
+      font-size: 13px;
+    }
+
+    .chat-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      height: 65px;
+      min-height: 65px;
+      display: flex;
+      align-items: center;
+      padding: 0 18px;
+      background: #0a2722;
+      border-bottom: 1px solid #285447;
+    }
+
+    .chat-header h3 {
+      font-size: 14px;
+      margin-bottom: 5px;
+      overflow-wrap: anywhere;
+    }
+
+    .chat-header p {
+      color: #a9c9b9;
+      font-size: 10px;
+    }
+
+    .messages-list {
+      flex: 1;
+      min-height: 0;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 20px 16px;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .message {
+      position: relative;
+      align-self: flex-start;
+      max-width: min(75%, 600px);
+      padding: 11px 12px;
+      border-radius: 12px 12px 12px 3px;
+      background: #204d40;
+      color: white;
+      font-size: 13px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .message.mine {
+      align-self: flex-end;
+      background: #397c5e;
+      border-radius: 12px 12px 3px 12px;
+    }
+
+    .message-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .message-text {
+      flex: 1;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .message-time {
+      display: block;
+      margin-top: 5px;
+      font-size: 9px;
+      color: #d1e9dc;
+    }
+
+    /* THREE DOTS MENU */
+
+    .message-menu-wrapper {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .message-dots {
+      width: 25px;
+      height: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      border-radius: 50%;
+      background: transparent;
+      color: white;
+      font-size: 21px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .message-dots:hover {
+      background: rgba(255, 255, 255, .15);
+    }
+
+    .message-menu {
+      position: absolute;
+      z-index: 100;
+      top: 27px;
+      right: 0;
+      width: 125px;
+      padding: 5px;
+      border: 1px solid #376b59;
+      border-radius: 9px;
+      background: #10332d;
+      box-shadow: 0 5px 18px rgba(0, 0, 0, .35);
+    }
+
+    .message-menu-item {
+      display: block;
+      width: 100%;
+      padding: 9px;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: white;
+      text-align: left;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .message-menu-item:hover {
+      background: #204a3d;
+    }
+
+    .message-menu-item.delete-item {
+      color: #ffaaa0;
+    }
+
+    /* MESSAGE INPUT */
+
+    .message-form {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 15px;
+      background: #10332d;
+      border-top: 1px solid #285447;
+      flex-shrink: 0;
+    }
+
+    .message-form input {
+      flex: 1;
+      min-width: 0;
+      height: 43px;
+      padding: 0 14px;
+      border: 1px solid #376b59;
+      border-radius: 10px;
+      outline: none;
+      color: white;
+      background: #173e35;
+      font-size: 13px;
+    }
+
+    .message-form input:focus {
+      border-color: #75c99c;
+    }
+
+    .message-form button {
+      width: 43px;
+      height: 43px;
+      flex-shrink: 0;
+      border: none;
+      border-radius: 10px;
+      background: #65b98b;
+      color: #0b2925;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .message-form button:hover {
+      background: #82d5a7;
+    }
+
+    .message-form button:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 700px) {
+      .app {
+        grid-template-columns: 105px minmax(0, 1fr);
+      }
+
+      .brand {
+        justify-content: center;
+        padding: 0 4px;
+        font-size: 15px;
+      }
+
+      .search-box {
+        padding: 8px 5px;
+      }
+
+      .search-box input {
+        padding: 0 5px;
+        font-size: 10px;
+      }
+
+      .section-title {
+        text-align: center;
+        font-size: 9px;
+      }
+
+      .contact-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 5px;
+        padding: 9px 3px;
+      }
+
+      .contact-name {
+        max-width: 90px;
+        font-size: 10px;
+      }
+
+      .user-profile {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .logout-btn {
+        padding: 8px 2px;
+        font-size: 10px;
+      }
+
+      .chat-header {
+        padding: 0 10px;
+      }
+
+      .messages-list {
+        padding: 12px 9px;
+      }
+
+      .message {
+        max-width: 90%;
+      }
+
+      .message-form {
+        padding: 8px;
+        gap: 6px;
+      }
+    }
+
+    /* ===== SCREEN SIZE FIX ===== */
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .app {
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .sidebar,
+    .main-content,
+    .chat-panel {
+      min-width: 0;
+      min-height: 0;
+    }
+
+    .contact-list,
+    .messages-list {
+      min-height: 0;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    .chat-panel {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .messages-list {
+      flex: 1;
+    }
+
+    .message-form {
+      flex-shrink: 0;
+    }
+
+    /* Laptop / desktop */
+    @media (min-width: 1000px) {
+      .app {
+        grid-template-columns: 270px minmax(0, 1fr);
+      }
+    }
+
+    /* Tablet and mobile */
+    @media (max-width: 999px) {
+      .app {
+        grid-template-columns: 220px minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .app {
+        grid-template-columns: 85px minmax(0, 1fr);
+      }
+
+      .brand {
+        font-size: 14px;
+        justify-content: center;
+        padding: 0 3px;
+      }
+
+      .contact-item {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .contact-name {
+        max-width: 75px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <aside class="sidebar">
+
+      <div class="brand">
+        <i class="bi bi-chat-dots-fill"></i>
+        <span>ChatBox</span>
+      </div>
+
+      <div class="search-box">
+        <input type="text" id="searchUsers" placeholder="Search users..." autocomplete="off">
+      </div>
+
+      <div class="section-title">CONTACTS</div>
+
+      <div class="contact-list" id="contactList">
+        <div class="empty-contacts">Loading users...</div>
+      </div>
+
+      <div class="sidebar-footer">
+
+        <div class="user-profile">
+          <div class="contact-avatar" id="userAvatar">U</div>
+
+          <div class="contact-info">
+            <div class="contact-name" id="profileName">User</div>
+            <div class="contact-status">My Account</div>
+          </div>
+        </div>
+
+        <button id="logoutBtn" class="logout-btn" type="button">
+          <i class="bi bi-box-arrow-right"></i>
+          Logout
+        </button>
+
+      </div>
+
+    </aside>
+
+    <main class="main-content">
+
+      <section class="chat-welcome" id="chatWelcome">
+
+        <div class="welcome-icon">
+          <i class="bi bi-chat-heart-fill"></i>
+        </div>
+
+        <h2>Welcome to ChatBox</h2>
+        <p>Select a contact to start chatting.</p>
+
+      </section>
+
+      <section class="chat-panel" id="chatPanel" hidden>
+
+        <header class="chat-header">
+          <div>
+            <h3 id="chatTitle">Chat</h3>
+            <p id="chatSubtitle">ChatBox conversation</p>
+          </div>
+        </header>
+
+        <div class="messages-list" id="messagesList"></div>
+
+        <form class="message-form" id="messageForm">
+
+          <input type="text" id="messageInput" placeholder="Type a message..." maxlength="2000" autocomplete="off"
+            required>
+
+          <button type="submit" id="sendBtn" aria-label="Send message">
+            <i class="bi bi-send-fill"></i>
+          </button>
+
+        </form>
+
+      </section>
+
+    </main>
+
+  </div>
+
+  <script type="module" src="js/dashboard.js"></script>
+
+</body>
+
+</html>
